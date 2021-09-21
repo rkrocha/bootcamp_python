@@ -1,53 +1,87 @@
 import json
 
-"""
-cookbook will store 3 recipes:
-• sandwich
-• cake
-• salad
+global cookbook
 
-Each recipe will store 3 values:
-• ingredients: a list of ingredients
-• meal: type of meal
-• prep_time: preparation time in minutes
 
-Sandwich’s ingredients are ham, bread, cheese and tomatoes. It is a lunch and it takes 10 minutes of preparation.
-
-Cake’s ingredients are flour, sugar and eggs. It is a dessert and it takes 60 minutes of preparation.
-
-Salad’s ingredients are avocado, arugula, tomatoes and spinach. It is a lunch and it takes 15 minutes of preparation.
-"""
-
-cookbook = {
-	"sandwich" : {
-	"ingredients" : ["ham", "bread", "cheese", "tomatoes"],
-	"meal" : "lunch",
-	"prep_time" : 10
-	},
-	"cake" : {
-	"ingredients" : ["flour", "sugar", "eggs"],
-	"meal" : "dessert",
-	"prep_time" : 60
-	},
-	"salad" : {
-	"ingredients" : ["avocado", "arugula", "tomatoes", "spinach"],
+def add_recipe():
+	recipe = dict({ "steak" : {
+	"ingredients" : ["steak", "salt", "pepper"],
 	"meal" : "lunch",
 	"prep_time" : 15
-	}
-}
+	}})
+	cookbook.update(recipe)
 
-def print_cookbook():
-	print(json.dumps(cookbook, sort_keys=True, indent=4))
 
-def print_recipe(name):
+def delete_recipe():
+	recipe = input("\nWhat recipe would you like to delete?\n")
+	if cookbook.get(recipe):
+		cookbook.pop(recipe)
+	else:
+		print("Recipe not found!\n")
+
+
+def print_recipe():
+	name = input("\nEnter the recipe's name to get its details:\n")
 	recipe = cookbook.get(name)
-	print(f'''\
+	if recipe:
+		print(f'''
 Recipe for {name}:
 Ingredients: {recipe["ingredients"]}
 To be eaten for {recipe["meal"]}.
 Takes {recipe["prep_time"]} minutes of prep.
 ''')
+	else:
+		print("Recipe not found!\n")
 
-print_recipe("cake")
-print_recipe("sandwich")
-print_recipe("salad")
+
+def print_cookbook():
+	print(json.dumps(cookbook, sort_keys=True, indent=4))
+
+
+def save_cookbook():
+	name = input("\nType a name for this new cookbook:\n") + ".json"
+	file = open(name, 'w')
+	file.write(json.dumps(cookbook, sort_keys=True, indent=4))
+	file.close()
+
+
+def wait_input():
+	cmd = input("""
+Please select an option by typing the corresponding number:
+1: Add a recipe
+2: Delete a recipe
+3: Print a recipe
+4: Print the cookbook
+5: Save cookbook to file
+6: Quit
+""")
+	if cmd == "1":
+		add_recipe()
+	elif cmd == "2":
+		delete_recipe()
+	elif cmd == "3":
+		print_recipe()
+	elif cmd == "4":
+		print_cookbook()
+	elif cmd == "5":
+		save_cookbook()
+	elif cmd == "6":
+		quit("\nGoodbye :)")
+
+
+name = input("Specify the name of a cookbook to open:\n")
+if name:
+	try:
+		file = open(name + ".json", 'r')
+	except FileNotFoundError:
+		file = ""
+if not name or not file:
+	print("No cookbook selected. Starting a new one.")
+	cookbook = dict()
+else:
+	cookbook = json.load(file)
+	file.close()
+
+while True:
+	wait_input()
+
