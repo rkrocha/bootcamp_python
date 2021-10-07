@@ -4,6 +4,7 @@ global cookbook
 
 
 def add_recipe():
+	recipe_name = input("What is the recipe called?\n")
 	recipe = dict({ "steak" : {
 	"ingredients" : ["steak", "salt", "pepper"],
 	"meal" : "lunch",
@@ -84,4 +85,3 @@ else:
 
 while True:
 	wait_input()
-
